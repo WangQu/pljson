@@ -193,15 +193,19 @@ begin
     </xsl:choose>
   </xsl:template>
   
+  <!--support mantissa. feature added by Turbo@2020.09.01-->
   <!-- number (no support for javascript mantissa) -->
-  <xsl:template match="text()[not(string(number())='NaN' or
-                      (starts-with(.,'0' ) and . != '0' and
-not(starts-with(.,'0.' ))) or
-                      (starts-with(.,'-0' ) and . != '-0' and
-not(starts-with(.,'-0.' )))
-                      )]">
-    <xsl:value-of select="."/>
-  </xsl:template>
+  <xsl:template match="text()[not (string(number())='NaN')]">
+     <xsl:choose>
+        <xsl:when test="starts-with(., '.')">          
+          <xsl:value-of select="concat('0', .)"/>
+        </xsl:when>
+        <xsl:when test="starts-with(., '0')">
+          <xsl:value-of select="concat('&quot;', .,'&quot;')"/>
+        </xsl:when>
+        <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+     </xsl:choose>
+  </xsl:template> 
   
   <!-- boolean, case-insensitive -->
   <xsl:template match="text()[translate(.,'TRUE','true')='true']">true</xsl:template>
